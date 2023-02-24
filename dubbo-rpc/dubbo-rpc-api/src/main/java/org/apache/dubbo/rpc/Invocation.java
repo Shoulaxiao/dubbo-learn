@@ -35,12 +35,16 @@ import org.apache.dubbo.rpc.model.ServiceModel;
  */
 public interface Invocation {
 
+    /**
+     * 调用service的唯一标识
+     * @return
+     */
     String getTargetServiceUniqueName();
 
     String getProtocolServiceKey();
 
     /**
-     * get method name.
+     * 获取方法名称
      *
      * @return method name.
      * @serial
@@ -49,14 +53,14 @@ public interface Invocation {
 
 
     /**
-     * get the interface name
+     *获取服务名称
      *
      * @return
      */
     String getServiceName();
 
     /**
-     * get parameter types.
+     * 获取参数类型列表
      *
      * @return parameter types.
      * @serial
@@ -75,7 +79,7 @@ public interface Invocation {
     }
 
     /**
-     * get arguments.
+     * 获取参数值
      *
      * @return arguments.
      * @serial
@@ -83,7 +87,7 @@ public interface Invocation {
     Object[] getArguments();
 
     /**
-     * get attachments.
+     * Invocation可以携带一个KV信息，一并传递给Provider
      *
      * @return attachments.
      * @serial

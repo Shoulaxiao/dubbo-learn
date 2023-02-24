@@ -47,7 +47,7 @@ import java.util.function.Function;
 public interface Result extends Serializable {
 
     /**
-     * Get invoke result.
+     * 获取调用结果
      *
      * @return result. if no result return null.
      */
@@ -56,7 +56,7 @@ public interface Result extends Serializable {
     void setValue(Object value);
 
     /**
-     * Get exception.
+     * 如果此次调用发生异常，则可以通过下面三个方法获取
      *
      * @return exception. if no exception return null.
      */
@@ -72,7 +72,7 @@ public interface Result extends Serializable {
     boolean hasException();
 
     /**
-     * Recreate.
+     * Recreate.是一个复合操作，如果此次调用发生异常，则抛出异常，没有就返回结果
      * <p>
      * <code>
      * if (hasException()) {
@@ -172,6 +172,7 @@ public interface Result extends Serializable {
 
     /**
      * Add a callback which can be triggered when the RPC call finishes.
+     * 添加一个回调，当RPC调用完成时，会触发这里添加的回调
      * <p>
      * Just as the method name implies, this method will guarantee the callback being triggered under the same context as when the call was started,
      * see implementation in {@link Result#whenCompleteWithContext(BiConsumer)}
@@ -183,6 +184,12 @@ public interface Result extends Serializable {
 
     <U> CompletableFuture<U> thenApply(Function<Result, ? extends U> fn);
 
+    /**
+     * 阻塞线程，等待RPC调用完成
+     * @return
+     * @throws InterruptedException
+     * @throws ExecutionException
+     */
     Result get() throws InterruptedException, ExecutionException;
 
     Result get(long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException;

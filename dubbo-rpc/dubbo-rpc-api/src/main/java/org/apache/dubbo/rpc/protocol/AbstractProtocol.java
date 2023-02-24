@@ -148,6 +148,7 @@ public abstract class AbstractProtocol implements Protocol, ScopeModelAware {
 
 
     protected void optimizeSerialization(URL url) throws RpcException {
+        // 确定SerializationOptimizer接口的实现类
         String className = url.getParameter(OPTIMIZER_KEY, "");
         if (StringUtils.isEmpty(className) || optimizers.contains(className)) {
             return;
@@ -160,13 +161,13 @@ public abstract class AbstractProtocol implements Protocol, ScopeModelAware {
             if (!SerializationOptimizer.class.isAssignableFrom(clazz)) {
                 throw new RpcException("The serialization optimizer " + className + " isn't an instance of " + SerializationOptimizer.class.getName());
             }
-
+            // 创建SerializationOptimizer实现类的对象
             SerializationOptimizer optimizer = (SerializationOptimizer) clazz.newInstance();
 
             if (optimizer.getSerializableClasses() == null) {
                 return;
             }
-
+            // 获取需要注册的类并且注册
             for (Class c : optimizer.getSerializableClasses()) {
                 SerializableClassRegistry.registerClass(c);
             }
