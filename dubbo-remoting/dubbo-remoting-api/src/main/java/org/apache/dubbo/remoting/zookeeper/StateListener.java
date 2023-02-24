@@ -16,6 +16,9 @@
  */
 package org.apache.dubbo.remoting.zookeeper;
 
+/**
+ * 用来监听dubbo与zookeeper集群的连接状态
+ */
 public interface StateListener {
 
     int SESSION_LOST = 0;

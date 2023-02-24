@@ -46,10 +46,16 @@ public abstract class AbstractZookeeperClient<TargetDataListener, TargetChildLis
 
     private final ConcurrentMap<String, ConcurrentMap<ChildListener, TargetChildListener>> childListeners = new ConcurrentHashMap<>();
 
+    /**
+     * 管理添加的各类监听器
+     */
     private final ConcurrentMap<String, ConcurrentMap<DataListener, TargetDataListener>> listeners = new ConcurrentHashMap<>();
 
     private volatile boolean closed = false;
 
+    /**
+     * 用来緩存ZookeeperClient创建的持久ZNode节点，减少交互
+     */
     private final Set<String> persistentExistNodePath = new ConcurrentHashSet<>();
 
     public AbstractZookeeperClient(URL url) {
@@ -119,8 +125,11 @@ public abstract class AbstractZookeeperClient<TargetDataListener, TargetChildLis
 
     @Override
     public void addDataListener(String path, DataListener listener, Executor executor) {
+        // 获取指定path上的DataListener
         ConcurrentMap<DataListener, TargetDataListener> dataListenerMap = ConcurrentHashMapUtils.computeIfAbsent(listeners, path, k -> new ConcurrentHashMap<>());
+        // 查询该DataListener关联的TargetDataListener
         TargetDataListener targetListener = ConcurrentHashMapUtils.computeIfAbsent(dataListenerMap, listener, k -> createTargetDataListener(path, k));
+        // 通过TargetDataListener在制定的path上添加监听
         addTargetDataListener(path, targetListener, executor);
     }
 

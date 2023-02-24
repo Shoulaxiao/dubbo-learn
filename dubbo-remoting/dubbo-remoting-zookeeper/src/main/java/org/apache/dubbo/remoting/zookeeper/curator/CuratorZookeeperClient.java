@@ -77,9 +77,13 @@ public class CuratorZookeeperClient extends AbstractZookeeperClient<CuratorZooke
             int timeout = url.getParameter(TIMEOUT_KEY, DEFAULT_CONNECTION_TIMEOUT_MS);
             int sessionExpireMs = url.getParameter(SESSION_KEY, DEFAULT_SESSION_TIMEOUT_MS);
             CuratorFrameworkFactory.Builder builder = CuratorFrameworkFactory.builder()
+                // zk地址(包括备用地址)
                 .connectString(url.getBackupAddress())
+                // 重试参数
                 .retryPolicy(new RetryNTimes(1, 1000))
+                // 连接超时时间
                 .connectionTimeoutMs(timeout)
+                // session过期时间
                 .sessionTimeoutMs(sessionExpireMs);
             String userInformation = url.getUserInformation();
             if (StringUtils.isNotEmpty(userInformation)) {
@@ -97,9 +101,11 @@ public class CuratorZookeeperClient extends AbstractZookeeperClient<CuratorZooke
                 });
             }
             client = builder.build();
+            // 添加连接状态监听
             client.getConnectionStateListenable().addListener(new CuratorConnectionStateListener(url));
+            // 启动zkClient
             client.start();
-
+            // 阻塞等待连接zookeeper集群成功
             boolean connected = client.blockUntilConnected(timeout, TimeUnit.MILLISECONDS);
             if (!connected) {
                 IllegalStateException illegalStateException = new IllegalStateException("zookeeper not connected, the address is: " + url);
